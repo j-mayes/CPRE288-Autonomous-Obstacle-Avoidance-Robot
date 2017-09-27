@@ -4,23 +4,36 @@
  * Author(s): Andre Chickering & Jensen Mayes
  */
 #include <stdint.h>
+#include <stlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include "TM4C123GH6PM.h"
 #include "timer.h"
 #include "lcd.h"
 
 int main(void) {
+  
   uint8_t num = 0, i = 0;
   char s_data, text[50];
   
+  UART_Init();
+  
+  while (1) {
+  
   get_data_putty(text);
   
-  //If text last value is \r then print whole string
+  num = strlen(text);
+  
+  if (text[num-1] == '\r') {
+    for (i = 0; i < num; i++) {
+      UART_Transmit(text[i]);
+    }
   
   else {
-    //transmit the last value stored in text and its array position
-  
-  UART_Init();
+    UART_Transmit(text[num]);
+    UART_Transmit((char)num);
+  }
+  }
 }
 
 void UART_Init(void) {
